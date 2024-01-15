@@ -11,7 +11,7 @@ This project uses the excellent [Tone](https://github.com/bhagman/Tone) library 
 
 ## Webcam LED bar
 
-7 LED bar (RGB + 4 White LED's) connected to Arduino via ribbon cable. The desired colour tone is specified as a HSL colour value.
+7 LED bar (RGB + 4 White LED's) connected to Arduino via ribbon cable. The desired colour tone is specified as an HSL colour value.
 
 Currently in use as disco illumination for my pet Cornell box (generously gifted by a friend who was making them as loot for HPG) and a 3D printed Utah teapot
 

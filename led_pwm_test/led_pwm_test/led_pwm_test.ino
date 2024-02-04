@@ -32,19 +32,9 @@ void setup() {
   SetupSerial();
   printf("Hello world!\n");
 
-
-  pinMode(6, OUTPUT);
-  digitalWrite(6, HIGH);
-  delay(500);
-  digitalWrite(6, LOW);
-  delay(500);
-  digitalWrite(6, HIGH);
-  delay(500);
-
 	LED.setOutput(6); // Digital Pin 9
 
   LED.setColorOrderRGBW();
-
 
   // r0 g0 b0
   // g1 w0 r1
@@ -64,6 +54,8 @@ void setup() {
   //LED.set_crgb_at(6, value);
   //LED.set_crgb_at(7, value);
   //LED.set_crgb_at(8, value);
+
+  LED.sync();
 }
 
 void colour_chase() {
@@ -268,9 +260,101 @@ void gamma_check()
 	delay(15); // Wait 500 ms
 }
 
+void all_white()
+{
+  cRGB colour { 32, 32, 32, 128 };
+  LED.set_crgb_at(0, colour);
+  LED.set_crgb_at(1, colour);
+  LED.set_crgb_at(2, colour);
+  LED.set_crgb_at(3, colour);
+  LED.set_crgb_at(4, colour);
+  LED.set_crgb_at(5, colour);
+  LED.sync(); // Sends the value to the LED
+	delay(15); // Wait 500 ms
+}
+
+struct StageLight
+{
+  cRGB colour;
+  float fTime;
+};
+
+StageLight lights[6] {
+  { {255, 0, 0, 0}, 0 },
+  { {0, 255, 0, 0}, PI * 0.1f },
+  { {0, 0, 255, 0}, PI * 1.0f },
+  { {255, 0, 255, 0}, PI * 0.37f },
+  { {0, 255, 255, 0}, PI * 0.58f },
+  { {255, 255, 0, 0}, PI * 1.7f }
+};
+
+// From Wikipedia https://en.wikipedia.org/wiki/Smoothstep
+float clamp(float x, float lowerlimit = 0.0f, float upperlimit = 1.0f) {
+  if (x < lowerlimit) return lowerlimit;
+  if (x > upperlimit) return upperlimit;
+  return x;
+}
+
+float smootherstep(float edge0, float edge1, float x) {
+  // Scale, and clamp x to 0..1 range
+  x = clamp((x - edge0) / (edge1 - edge0));
+
+  return x * x * x * (x * (6.0f * x - 15.0f) + 10.0f);
+}
+
+float smoothstep(float edge0, float edge1, float x)
+{
+   // Scale, and clamp x to 0..1 range
+   x = clamp((x - edge0) / (edge1 - edge0));
+
+   return x * x * (3.0f - 2.0f * x);
+}
+// End Wikipedia
+
+void iterate_light(uint8_t i)
+{
+  float fT = lights[i].fTime;
+  fT += 0.01f;
+
+  //if (i==0) {
+  printf("%f\n", fT);
+  //}
+
+  float fScale = 0.4f * smootherstep(0.0f, 1.0f, fT) * (1.0f - smootherstep(3.0f, 4.0f, fT));
+
+  uint8_t r, g, b;
+  r = (uint8_t)(lights[i].colour.r * fScale);
+  g = (uint8_t)(lights[i].colour.g * fScale);
+  b = (uint8_t)(lights[i].colour.b * fScale);
+
+  cRGB c = { r, g, b, 0 };
+  LED.set_crgb_at(i, c);
+
+  if (fT > 6.0f)
+  {
+    float fHue = (rand()%36000) / 100.0f;
+    ColourFromHSL(fHue, 0.9f, 0.5f, lights[i].colour.r, lights[i].colour.g, lights[i].colour.b, lights[i].colour.w);
+    fT = 0.0f;
+  }
+  lights[i].fTime = fT;
+}
+
+void stage_lights()
+{
+  for (uint8_t i = 0; i < 6; i++)
+  {
+    iterate_light(i);
+  }
+  LED.sync(); // Sends the value to the LED
+	delay(15); // Wait 500 ms
+}
+
 void loop() {
+  printf("Loop\n");
+  //all_white();
   //colour_chase();
   //random_colours();
   //hue_wheel();
-  gamma_check();
+  //gamma_check();
+  stage_lights();
 }

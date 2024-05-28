@@ -1,6 +1,8 @@
 # CaffeinePwrdArduino
 Collection of Arduino projects and experiments
 
+All my work is MIT, though some 3rd party libraries may use differing licenses - those works remain the copyright of their respective owners unless otherwise noted.
+
 ## Tone Generator/ dtmf.url.
 
 Uses a PC speaker and two output pins to play a piece of nostalgic game music rendered using dual-tone multiple-frequency.

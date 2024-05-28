@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #
 # Copyright (c) 2024 Alex Walters. All rights reserved.
 #
@@ -24,6 +25,9 @@
 # but it demonstrates the theory.
 #
 
+=======
+dimensions = (8, 8)
+>>>>>>> 37c3fb8aed04a59b5c26dd01e5f21bc3e15ceb57
 patterns = [
     [ 
         [ 1, 0, 1, 0, 1, 0, 1, 0 ],
